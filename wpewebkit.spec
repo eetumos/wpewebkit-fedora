@@ -48,6 +48,7 @@ BuildRequires: mesa-libEGL-devel
 BuildRequires: mesa-libgbm-devel
 BuildRequires: ninja-build
 BuildRequires: openssl-devel
+BuildRequires: openxr-devel
 BuildRequires: perl(English)
 BuildRequires: perl(File::Copy::Recursive)
 BuildRequires: perl-File-Find
@@ -139,6 +140,9 @@ files for developing applications that use %{name}
   -DENABLE_INTROSPECTION=OFF \
   -DUSE_LIBBACKTRACE=OFF \
   -DENABLE_WPE_PLATFORM=ON \
+  -DENABLE_WEBXR=ON \
+  -DENABLE_WEBXR_HIT_TEST=ON \
+  -DENABLE_WEBXR_LAYERS=ON \
   -GNinja
 
 
