@@ -7,14 +7,16 @@ cp -p %1 _license_files/$(echo '%1' | sed -e 's!/!.!g')
 
 %global toolchain clang
 
+%global date 20260620
+%global commit 9e91f375cf99af97d10d41a730eb2d6998d1e4ba
+
 Name:           wpewebkit
-Version:        2.52.4
+Version:        2.52.4^%{date}g%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        A WebKit port optimized for low-end devices
 
 License:        LGPLv2 and BSD
 URL:            https://www.%{name}.org/
-Source0:        https://wpewebkit.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires: atk-devel at-spi2-atk-devel
 BuildRequires: bison
@@ -26,6 +28,7 @@ BuildRequires: flex
 BuildRequires: flite-devel
 BuildRequires: clang
 BuildRequires: gi-docgen
+BuildRequires: git
 BuildRequires: gperf
 BuildRequires: gstreamer1-devel
 BuildRequires: gstreamer1-plugins-bad-free-devel
@@ -75,6 +78,7 @@ BuildRequires: libseccomp-devel
 BuildRequires: xdg-dbus-proxy
 BuildRequires: lcms2-devel
 BuildRequires: mold
+BuildRequires: enchant2-devel
 
 BuildRequires: pkgconfig(libavif)
 BuildRequires: pkgconfig(libdrm)
@@ -100,7 +104,8 @@ The %{name}-devel package contains libraries, build data, and header
 files for developing applications that use %{name}
 
 %prep
-%autosetup -p1 -n wpewebkit-%{version}
+git clone --revision=%{commit} --depth=1 https://github.com/WebKit/WebKit
+%global buildsubdir WebKit
 
 %build
 # Increase the DIE limit so our debuginfo packages could be size optimized.
@@ -186,7 +191,6 @@ export NINJA_STATUS="[%f/%t][%e] "
 %add_to_license_files Source/ThirdParty/ANGLE/third_party/proguard/LICENSE
 %add_to_license_files Source/ThirdParty/ANGLE/third_party/flatbuffers/LICENSE
 %add_to_license_files Source/ThirdParty/ANGLE/third_party/turbine/LICENSE
-%add_to_license_files Source/ThirdParty/ANGLE/third_party/bazel/LICENSE
 
 %files
 %{_bindir}/WPEWebDriver
@@ -194,7 +198,6 @@ export NINJA_STATUS="[%f/%t][%e] "
 %{_libexecdir}/wpe-webkit-2.0
 %{_libdir}/wpe-webkit-2.0
 %{_datadir}/wpe-webkit-2.0
-%doc NEWS
 %license _license_files/*ThirdParty*
 %license _license_files/*WebCore*
 %license _license_files/*WebInspectorUI*
