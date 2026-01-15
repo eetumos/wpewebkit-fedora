@@ -18,6 +18,8 @@ Summary:        A WebKit port optimized for low-end devices
 License:        LGPLv2 and BSD
 URL:            https://www.%{name}.org/
 
+Patch0:         webkit-openxr-disable-dmabuf.patch
+
 BuildRequires: atk-devel at-spi2-atk-devel
 BuildRequires: bison
 BuildRequires: cairo-devel
@@ -106,6 +108,9 @@ files for developing applications that use %{name}
 %prep
 git clone --revision=%{commit} --depth=1 https://github.com/WebKit/WebKit
 %global buildsubdir WebKit
+cd %{_builddir}/%{buildsubdir}
+
+%patch -P0 -p1
 
 %build
 # Increase the DIE limit so our debuginfo packages could be size optimized.

@@ -1,0 +1,44 @@
+From 12f19e30dbc3a3cf7a44b6c8e42421a292bef20f Mon Sep 17 00:00:00 2001
+From: Eetu Suihkonen <eetu.suihkonen@gmail.com>
+Date: Thu, 15 Jan 2026 09:56:02 +0200
+Subject: [PATCH] Add WEBKIT_OPENXR_DISABLE_DMABUF
+
+exportOpenXRTextureDMABuf hangs at eglCreateImage with NVIDIA GTX 1060.
+Setting WEBKIT_OPENXR_DISABLE_DMABUF=1 causes exportOpenXRTextureGBM to
+be used as a fallback.
+---
+ Source/WebKit/UIProcess/XR/openxr/OpenXRLayer.cpp      | 3 ++-
+ Source/WebKit/UIProcess/XR/openxr/PlatformXROpenXR.cpp | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebKit/UIProcess/XR/openxr/OpenXRLayer.cpp b/Source/WebKit/UIProcess/XR/openxr/OpenXRLayer.cpp
+index ae986300ba..d91ea0ff47 100644
+--- a/Source/WebKit/UIProcess/XR/openxr/OpenXRLayer.cpp
++++ b/Source/WebKit/UIProcess/XR/openxr/OpenXRLayer.cpp
+@@ -362,7 +362,8 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRLayer::exportOpenXRT
+ #if OS(ANDROID)
+     return exportOpenXRTextureAndroid(*display, openxrTexture);
+ #else
+-    if (display->extensions().MESA_image_dma_buf_export)
++    auto disableDMABuf = std::getenv("WEBKIT_OPENXR_DISABLE_DMABUF");
++    if (display->extensions().MESA_image_dma_buf_export && (disableDMABuf == nullptr || std::strncmp(disableDMABuf, "1", 2) != 0))
+         return exportOpenXRTextureDMABuf(*display, *glContext, openxrTexture);
+ #endif
+ 
+diff --git a/Source/WebKit/UIProcess/XR/openxr/PlatformXROpenXR.cpp b/Source/WebKit/UIProcess/XR/openxr/PlatformXROpenXR.cpp
+index 3bdc12b321..d990db3491 100644
+--- a/Source/WebKit/UIProcess/XR/openxr/PlatformXROpenXR.cpp
++++ b/Source/WebKit/UIProcess/XR/openxr/PlatformXROpenXR.cpp
+@@ -601,7 +601,8 @@ RefPtr<WebCore::GLDisplay> OpenXRCoordinator::createGLDisplay(bool isForTesting)
+     }
+ #endif // OS(ANDROID)
+ 
+-    if (WebCore::GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless")) {
++    auto disableDMABuf = std::getenv("WEBKIT_OPENXR_DISABLE_DMABUF");
++    if (WebCore::GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless") && (disableDMABuf == nullptr || std::strncmp(disableDMABuf, "1", 2) != 0)) {
+         glDisplay = tryCreateDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY);
+         if (glDisplay && !isForTesting && !glDisplay->extensions().MESA_image_dma_buf_export)
+             glDisplay = nullptr;
+-- 
+2.52.0
+
