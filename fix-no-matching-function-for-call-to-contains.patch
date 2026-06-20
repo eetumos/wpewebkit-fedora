@@ -1,0 +1,25 @@
+From 83b0bc66800d2ee97b837be709b33810afce4b03 Mon Sep 17 00:00:00 2001
+From: Eetu Suihkonen <eetu.suihkonen@gmail.com>
+Date: Sat, 20 Jun 2026 14:16:16 +0300
+Subject: [PATCH] Fix compilation error
+
+---
+ .../graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp     | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp b/Source/WebCore/platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
+index 39f4f9dc00..b61be505cd 100644
+--- a/Source/WebCore/platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
++++ b/Source/WebCore/platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
+@@ -306,7 +306,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
+     eglContextAttributes.append(0);
+ #endif
+ 
+-    if (contains(unsafeSpan(displayExtensions), "EGL_ANGLE_power_preference"_span)) {
++    if (WTF::contains(unsafeSpan(displayExtensions), "EGL_ANGLE_power_preference"_span)) {
+         eglContextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
+         // EGL_LOW_POWER_ANGLE is the default. Change to
+         // EGL_HIGH_POWER_ANGLE if desired.
+-- 
+2.54.0
+

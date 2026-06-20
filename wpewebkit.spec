@@ -19,6 +19,7 @@ License:        LGPLv2 and BSD
 URL:            https://www.%{name}.org/
 
 Patch0:         webkit-openxr-disable-dmabuf.patch
+Patch1:         fix-no-matching-function-for-call-to-contains.patch
 
 BuildRequires: atk-devel at-spi2-atk-devel
 BuildRequires: bison
@@ -111,6 +112,7 @@ git clone --revision=%{commit} --depth=1 https://github.com/WebKit/WebKit
 cd %{_builddir}/%{buildsubdir}
 
 %patch -P0 -p1
+%patch -P1 -p1
 
 %build
 # Increase the DIE limit so our debuginfo packages could be size optimized.
